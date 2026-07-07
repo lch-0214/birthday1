@@ -164,7 +164,7 @@
       width="100%" 
       playsinline 
       webkit-playsinline> 
-      <source src="../video/结尾视频.mp4" type="video/mp4">
+      <source src="结尾视频.mp4" type="video/mp4">
       您的浏览器不支持视频播放。
       </video>
     </div>
@@ -174,52 +174,48 @@
     </div>
 
     <div class="message">
-      <p>亲爱的朋友，不忙的话，还请你耐心看完这个视频哟！</p>
+      <p>亲爱的宝宝请你耐心看完这个视频哟！</p>
       <p>愿你的每一天都充满惊喜与快乐、都洋溢着幸福与欢笑 🎂</p>
       <p>每一段代码都有终止符，但你的故事是持续热更新的动态脚本！</p>
     </div>
   </div>
 
-  <!--<script>
-    const video = document.getElementById('birthdayVideo');
-    
-    video.addEventListener('loadeddata', () => {
-      console.log('视频加载完成');
-    });
-
-    video.addEventListener('error', (e) => {
-      console.error('视频加载失败:', e);
-      const wrapper = document.querySelector('.video-wrapper');
-      wrapper.innerHTML = `
-        <div style="padding: 60px 20px; text-align: center; color: rgba(255,255,255,0.8);">
-          <p style="font-size: 40px; margin-bottom: 20px;">📼</p>
-          <p style="font-size: 18px; margin-bottom: 10px;">视频好像迷路了...</p>
-          <p style="font-size: 12px; color: rgba(255,255,255,0.4);">请检查 ../video/结尾视频.mp4 是否存在</p>
-        </div>
-      `;
-    });
-  </script>-->
   <script>
     const video = document.getElementById('birthdayVideo');
     const container = document.querySelector('.container');
 
-    // 1. 页面加载后触发入场动画
-    window.onload = function() {
-        // 强制重绘
-        container.offsetHeight; 
-        // 添加激活类，开始动画
+    // 1. 入场动画（不等待视频加载，直接用DOMContentLoaded）
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            container.offsetHeight;
+            container.classList.add('active');
+        });
+    } else {
+        // DOM已就绪，直接触发
+        container.offsetHeight;
         container.classList.add('active');
-    };
+    }
 
-    // 2. 视频加载监听（保持你原有的逻辑）
+    // 2. 视频加载监听
     video.addEventListener('loadeddata', () => {
       console.log('视频加载完成');
     });
 
-    // ... 你原有的 error 监听代码 ...
-    
-    // 3. 【新增】强制全屏修复补丁
-    // 如果浏览器真的死活不让用原生按钮，我们监听双击视频区域强制全屏
+    // 3. 视频加载错误处理
+    video.addEventListener('error', (e) => {
+      console.error('视频加载失败:', e);
+      const errorMsg = document.createElement('div');
+      errorMsg.style.cssText = 'padding: 20px; text-align: center; color: rgba(255,255,255,0.8); background: rgba(255,0,0,0.1); border-radius: 10px; margin: 10px;';
+      errorMsg.innerHTML = `
+        <p style="font-size: 40px; margin-bottom: 20px;">📼</p>
+        <p style="font-size: 18px; margin-bottom: 10px;">视频加载失败</p>
+        <p style="font-size: 12px; color: rgba(255,255,255,0.4);">错误码: ${video.error ? video.error.code : '未知'}，消息: ${video.error ? video.error.message : '未知'}</p>
+        <p style="font-size: 12px; color: rgba(255,255,255,0.4);">路径: 结尾视频.mp4</p>
+      `;
+      document.querySelector('.video-wrapper').appendChild(errorMsg);
+    });
+
+    // 4. 双击视频区域强制全屏
     video.addEventListener('dblclick', function() {
         if (video.requestFullscreen) {
             video.requestFullscreen();
