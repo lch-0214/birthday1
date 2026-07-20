@@ -66,8 +66,9 @@
 
 <body>
     <div class="video-container">
-        <video id="bgVideo" autoplay loop playsinline>
-            <source src="./video/Try everything.mp4" type="video/mp4">
+        <video id="bgVideo" autoplay loop muted playsinline webkit-playsinline x5-playsinline
+               x5-video-player-type="h5-page" preload="metadata">
+            <source src="./video/intro-wechat.mp4" type="video/mp4">
             您的浏览器不支持 HTML5 视频。
         </video>
     </div>
@@ -111,6 +112,9 @@
             // 1. 处理全屏请求
             if (event.data === 'requestFullScreen') {
                 toggleFullScreen();
+                // 微信禁止有声视频自动播放；登录按钮属于用户主动操作。
+                video.muted = false;
+                video.play().catch(function() {});
             }
             
             // 2. 处理跳转请求（保持全屏的关键！）
@@ -151,7 +155,7 @@
             changeFrameHeight(); // 初始化高度
             
             var video = document.getElementById('bgVideo');
-            // 尝试自动播放
+            // 静音视频可在微信中自动播放；点击登录后恢复声音。
             video.play().catch(function(error) {
                 // 如果自动播放失败，添加点击遮罩
                 var tipElement = document.createElement('div');
@@ -161,8 +165,8 @@
                 
                 tipElement.addEventListener('click', function() {
                     toggleFullScreen();
-                    video.play();
                     video.muted = false;
+                    video.play().catch(function() {});
                     tipElement.parentNode.removeChild(tipElement);
                 });
             });
